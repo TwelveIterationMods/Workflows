@@ -1,0 +1,52 @@
+name: build
+on: [workflow_call]
+
+jobs:
+  build-fabric:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+      - name: Make gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: Build
+        run: ./gradlew :fabric:build
+        env:
+          GPR_USERNAME: ${{secrets.GPR_USERNAME}}
+          GPR_TOKEN: ${{secrets.GPR_TOKEN}}
+          GPR_BUILD_NUMBER: ${{github.run_number}}
+      - name: Capture build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Artifacts
+          path: fabric/build/libs/
+  build-forge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+      - name: Make gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: Build
+        run: ./gradlew :forge:build
+        env:
+          GPR_USERNAME: ${{secrets.GPR_USERNAME}}
+          GPR_TOKEN: ${{secrets.GPR_TOKEN}}
+          GPR_BUILD_NUMBER: ${{github.run_number}}
+      - name: Capture build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Artifacts
+          path: forge/build/libs/

@@ -31,7 +31,6 @@ jobs:
           GPR_BUILD_VERSION: ${{steps.extract_tag_name_fabric.outputs.tag}}
           GPR_BUILD_NUMBER: ${{github.run_number}}
   publish-release-forge:
-    needs: build
     runs-on: ubuntu-latest
     permissions:
       packages: write

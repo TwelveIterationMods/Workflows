@@ -1,0 +1,61 @@
+name: update-versions
+on:
+ workflow_input:
+   minecraftVersion:
+     description: 'The Minecraft version to update to'
+     required: true
+     type: string
+   channel:
+     description: 'The release channel to update to, either latest or recommended'
+     required: false
+     default: 'latest'
+     type: string
+
+jobs:
+  update-versions-forge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Finding Forge version
+        uses: ModdingForBlockheads/get-forge-version@v1
+        with:
+          minecraftVersion: ${{ inputs.minecraftVersion }}
+          channel: ${{ inputs.channel }}
+        id: get-forge-version
+      - name: Finding prior patch versions
+        #uses: ModdingForBlockheads/iterate-minor-version@v1
+        #with:
+        #  version: ${{ inputs.minecraftVersion }}
+        run: |
+          echo "::set-output name=versions::1.19.0,1.19.1,1.19.2"
+          echo "::set-output name=minorOnly::1.19"
+        id: iterate-minor-version
+      - name: Ensuring version branch exists
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "<>"
+          git switch -c ${VERSION_BRANCH}
+          git push origin ${VERSION_BRANCH}
+        shell: bash
+        env:
+          VERSION_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x
+      - name: Updating version properties
+        run: |
+          sed -i "s/forge_version=.*/forge_version=${{ steps.get-forge-version.outputs.version }}/g" gradle.properties
+          sed -i "s/minecraft_version=.*/minecraft_version=${{ inputs.minecraftVersion }}/g" gradle.properties
+          sed -i "s/minecraft_versions=.*/minecraft_versions=${{ steps.iterate-minor-version.outputs.versions }}/g" gradle.properties
+      - name: Creating pull request
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "<>"
+          git switch -c ${{ steps.iterate-minor-version.outputs.minorOnly }}.x-update-versions
+          git commit -am "Update Forge versions for ${{ inputs.minecraftVersion }}"
+          git push origin ${{ steps.iterate-minor-version.outputs.minorOnly }}.x-update-versions
+          gh pr create \
+            --head "${PR_BRANCH}" \
+            --base "${TARGET_BRANCH}" \
+            --title "Update Forge versions for ${TARGET_BRANCH} to ${{ inputs.minecraftVersion }}" \
+            --body "Automatic version updates for ${TARGET_BRANCH} to ${{ inputs.minecraftVersion }}. Supported versions set to ${{ steps.iterate-minor-version.outputs.versions }}."
+        shell: bash
+        env:
+          PR_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x-update-versions
+          TARGET_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x

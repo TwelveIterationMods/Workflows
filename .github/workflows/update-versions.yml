@@ -52,7 +52,7 @@ jobs:
           git config user.email "<>"
           git switch -c ${{ steps.iterate-minor-version.outputs.minorOnly }}.x-update-versions
           git commit -am "Update Forge versions for ${{ inputs.minecraftVersion }}"
-          git push origin ${{ steps.iterate-minor-version.outputs.minorOnly }}.x-update-versions
+          git push --force-with-lease origin ${{ steps.iterate-minor-version.outputs.minorOnly }}.x-update-versions
           gh pr create \
             --head "${PR_BRANCH}" \
             --base "${TARGET_BRANCH}" \

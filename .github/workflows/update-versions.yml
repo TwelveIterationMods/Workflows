@@ -30,6 +30,8 @@ jobs:
           echo "::set-output name=versions::1.19.0,1.19.1,1.19.2"
           echo "::set-output name=minorOnly::1.19"
         id: iterate-minor-version
+      - name: Checkout repository
+        uses: actions/checkout@v3
       - name: Ensuring version branch exists
         run: |
           git config user.name "GitHub Actions"

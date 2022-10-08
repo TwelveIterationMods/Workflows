@@ -30,7 +30,6 @@ jobs:
           CURSEFORGE_TOKEN: ${{secrets.CURSEFORGE_TOKEN}}
           MODRINTH_TOKEN: ${{secrets.MODRINTH_TOKEN}}
           GPR_BUILD_VERSION: ${{steps.extract_tag_name_fabric.outputs.tag}}
-          GPR_BUILD_NUMBER: ${{github.run_number}}
   publish-release-forge:
     runs-on: ubuntu-latest
     permissions:
@@ -58,5 +57,4 @@ jobs:
           GPR_TOKEN: ${{secrets.GPR_TOKEN}}
           CURSEFORGE_TOKEN: ${{secrets.CURSEFORGE_TOKEN}}
           MODRINTH_TOKEN: ${{secrets.MODRINTH_TOKEN}}
-          GPR_BUILD_VERSION: ${{steps.extract_tag_name_fabric.outputs.tag}}
-          GPR_BUILD_NUMBER: ${{github.run_number}}
+          GPR_BUILD_VERSION: ${{steps.extract_tag_name_forge.outputs.tag}}

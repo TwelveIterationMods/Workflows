@@ -18,10 +18,10 @@ jobs:
           distribution: temurin
       - name: Make gradle wrapper executable
         run: chmod +x ./gradlew
-      - name: Extract tag name
+      - name: Extract version from tag
         shell: bash
-        run: echo "##[set-output name=tag;]$(echo ${GITHUB_REF#refs/*/})"
-        id: extract_tag_name_fabric
+        run: echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/*/v})"
+        id: extract_version_fabric
       - name: Publish
         run: ./gradlew :fabric:publish
         env:
@@ -29,7 +29,7 @@ jobs:
           GPR_TOKEN: ${{secrets.GPR_TOKEN}}
           CURSEFORGE_TOKEN: ${{secrets.CURSEFORGE_TOKEN}}
           MODRINTH_TOKEN: ${{secrets.MODRINTH_TOKEN}}
-          GPR_BUILD_VERSION: ${{steps.extract_tag_name_fabric.outputs.tag}}
+          GPR_BUILD_VERSION: ${{steps.extract_version_fabric.outputs.version}}
   publish-release-forge:
     runs-on: ubuntu-latest
     permissions:
@@ -46,10 +46,10 @@ jobs:
           distribution: temurin
       - name: Make gradle wrapper executable
         run: chmod +x ./gradlew
-      - name: Extract tag name
+      - name: Extract version from tag
         shell: bash
-        run: echo "##[set-output name=tag;]$(echo ${GITHUB_REF#refs/*/})"
-        id: extract_tag_name_forge
+        run: echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/*/v})"
+        id: extract_version_forge
       - name: Publish
         run: ./gradlew :forge:publish
         env:
@@ -57,4 +57,4 @@ jobs:
           GPR_TOKEN: ${{secrets.GPR_TOKEN}}
           CURSEFORGE_TOKEN: ${{secrets.CURSEFORGE_TOKEN}}
           MODRINTH_TOKEN: ${{secrets.MODRINTH_TOKEN}}
-          GPR_BUILD_VERSION: ${{steps.extract_tag_name_forge.outputs.tag}}
+          GPR_BUILD_VERSION: ${{steps.extract_version_forge.outputs.version}}

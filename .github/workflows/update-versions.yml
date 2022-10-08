@@ -1,15 +1,16 @@
 name: update-versions
 on:
- workflow_input:
-   minecraftVersion:
-     description: 'The Minecraft version to update to'
-     required: true
-     type: string
-   channel:
-     description: 'The release channel to update to, either latest or recommended'
-     required: false
-     default: 'latest'
-     type: string
+  workflow_call:
+    inputs:
+     minecraftVersion:
+       description: 'The Minecraft version to update to'
+       required: true
+       type: string
+     channel:
+       description: 'The release channel to update to, either latest or recommended'
+       required: false
+       default: 'latest'
+       type: string
 
 jobs:
   update-versions-forge:

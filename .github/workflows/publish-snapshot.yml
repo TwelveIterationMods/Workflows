@@ -17,11 +17,6 @@ jobs:
           java-version: 17
       - name: Make gradle wrapper executable
         run: chmod +x ./gradlew
-      - name: Restore build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: Artifacts
-          path: fabric/build/libs/
       - name: Publish
         run: ./gradlew :fabric:publish
         env:
@@ -42,11 +37,6 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 17
-      - name: Restore build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: Artifacts
-          path: forge/build/libs/
       - name: Make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: Publish

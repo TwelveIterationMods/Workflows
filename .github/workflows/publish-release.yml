@@ -17,11 +17,6 @@ jobs:
           java-version: 17
       - name: Make gradle wrapper executable
         run: chmod +x ./gradlew
-      - name: Restore build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: Artifacts
-          path: fabric/build/libs/
       - name: Extract tag name
         shell: bash
         run: echo "##[set-output name=tag;]$(echo ${GITHUB_REF#refs/*/})"
@@ -51,11 +46,6 @@ jobs:
           java-version: 17
       - name: Make gradle wrapper executable
         run: chmod +x ./gradlew
-      - name: Restore build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: Artifacts
-          path: forge/build/libs/
       - name: Extract tag name
         shell: bash
         run: echo "##[set-output name=tag;]$(echo ${GITHUB_REF#refs/*/})"

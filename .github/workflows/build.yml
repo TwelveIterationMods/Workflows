@@ -21,11 +21,6 @@ jobs:
           GPR_USERNAME: ${{secrets.GPR_USERNAME}}
           GPR_TOKEN: ${{secrets.GPR_TOKEN}}
           GPR_BUILD_NUMBER: ${{github.run_number}}
-      - name: Capture build artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: Artifacts
-          path: fabric/build/libs/
   build-forge:
     runs-on: ubuntu-latest
     steps:
@@ -45,8 +40,3 @@ jobs:
           GPR_USERNAME: ${{secrets.GPR_USERNAME}}
           GPR_TOKEN: ${{secrets.GPR_TOKEN}}
           GPR_BUILD_NUMBER: ${{github.run_number}}
-      - name: Capture build artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: Artifacts
-          path: forge/build/libs/

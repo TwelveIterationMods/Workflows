@@ -43,9 +43,9 @@ jobs:
           VERSION_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x
       - name: Updating version properties
         run: |
-          sed -i "s/forge_version\s*=.*/forge_version = ${{ steps.get-forge-version.outputs.version }}/g" gradle.properties
-          sed -i "s/minecraft_version\s*=.*/minecraft_version = ${{ inputs.minecraftVersion }}/g" gradle.properties
-          sed -i "s/minecraft_versions\s*=.*/minecraft_versions = ${{ steps.iterate-minor-version.outputs.versions }}/g" gradle.properties
+          sed -i "s/^\s*forge_version\s*=.*/forge_version = ${{ steps.get-forge-version.outputs.version }}/g" gradle.properties
+          sed -i "s/^\s*minecraft_version\s*=.*/minecraft_version = ${{ inputs.minecraftVersion }}/g" gradle.properties
+          sed -i "s/^\s*minecraft_versions\s*=.*/minecraft_versions = ${{ steps.iterate-minor-version.outputs.versions }}/g" gradle.properties
       - name: Creating pull request
         run: |
           git config user.name "GitHub Actions"
@@ -62,3 +62,4 @@ jobs:
         env:
           PR_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x-update-versions
           TARGET_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

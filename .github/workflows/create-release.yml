@@ -27,6 +27,8 @@ jobs:
       - name: Updating version properties
         run: |
           sed -i "s/^\s*mod_version\s*=.*/mod_version = ${{ steps.bump-version.outputs.version }}/g" gradle.properties
+          git config user.name "GitHub Actions"
+          git config user.email "<>"
           git commit -am "Set version to ${{ steps.bump-version.outputs.version }}"
           git push origin ${BRANCH_NAME}
           git tag -a "v${{ steps.bump-version.outputs.version }}" -m "Release ${{ steps.bump-version.outputs.version }}"

@@ -42,7 +42,7 @@ jobs:
         run: |
           sed -i "s/^\s*forge_version\s*=.*/forge_version = ${{ steps.get-forge-version.outputs.version }}/g" gradle.properties
           sed -i "s/^\s*minecraft_version\s*=.*/minecraft_version = ${{ inputs.minecraftVersion }}/g" gradle.properties
-          sed -i "s/^\s*minecraft_versions\s*=.*/minecraft_versions = ${{ steps.iterate-minor-version.outputs.versions }}/g" gradle.properties
+          sed -i "s/^\s*minecraft_versions\s*=.*/minecraft_versions = ${{ join(fromJSON(steps.iterate-minor-version.outputs.versions)) }}/g" gradle.properties
       - name: Creating pull request
         run: |
           git config user.name "GitHub Actions"
@@ -87,10 +87,10 @@ jobs:
           VERSION_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x
       - name: Updating version properties
         run: |
-          sed -i "s/^\s*forge_version\s*=.*/fabric_version = ${{ steps.get-fabric-version.outputs.apiVersion }}/g" gradle.properties
-          sed -i "s/^\s*forge_version\s*=.*/fabric_loader_version = ${{ steps.get-fabric-version.outputs.loaderVersion }}/g" gradle.properties
+          sed -i "s/^\s*fabric_version\s*=.*/fabric_version = ${{ steps.get-fabric-version.outputs.apiVersion }}/g" gradle.properties
+          sed -i "s/^\s*fabric_loader_version\s*=.*/fabric_loader_version = ${{ steps.get-fabric-version.outputs.loaderVersion }}/g" gradle.properties
           sed -i "s/^\s*minecraft_version\s*=.*/minecraft_version = ${{ inputs.minecraftVersion }}/g" gradle.properties
-          sed -i "s/^\s*minecraft_versions\s*=.*/minecraft_versions = ${{ steps.iterate-minor-version.outputs.versions }}/g" gradle.properties
+          sed -i "s/^\s*minecraft_versions\s*=.*/minecraft_versions = ${{ join(fromJSON(steps.iterate-minor-version.outputs.versions)) }}/g" gradle.properties
       - name: Creating pull request
         run: |
           git config user.name "GitHub Actions"

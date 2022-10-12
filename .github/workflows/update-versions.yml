@@ -23,12 +23,9 @@ jobs:
           channel: ${{ inputs.channel }}
         id: get-forge-version
       - name: Finding prior patch versions
-        #uses: ModdingForBlockheads/iterate-minor-version@v1
-        #with:
-        #  version: ${{ inputs.minecraftVersion }}
-        run: |
-          echo "::set-output name=versions::1.19.0,1.19.1,1.19.2"
-          echo "::set-output name=minorOnly::1.19"
+        uses: ModdingForBlockheads/iterate-minor-version@v1
+        with:
+          version: ${{ inputs.minecraftVersion }}
         id: iterate-minor-version
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -50,9 +47,9 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "<>"
-          git switch -c ${{ steps.iterate-minor-version.outputs.minorOnly }}.x-update-versions
+          git switch -c $PR_BRANCH
           git commit -am "Update Forge versions for ${{ inputs.minecraftVersion }}"
-          git push --force-with-lease origin ${{ steps.iterate-minor-version.outputs.minorOnly }}.x-update-versions
+          git push --force-with-lease origin $PR_BRANCH
           gh pr create \
             --head "${PR_BRANCH}" \
             --base "${TARGET_BRANCH}" \
@@ -60,6 +57,54 @@ jobs:
             --body "Automatic version updates for ${TARGET_BRANCH} to ${{ inputs.minecraftVersion }}. Supported versions set to ${{ steps.iterate-minor-version.outputs.versions }}."
         shell: bash
         env:
-          PR_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x-update-versions
+          PR_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x-update-forge-versions
+          TARGET_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  update-versions-fabric:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Finding Fabric version
+        uses: ModdingForBlockheads/get-fabric-version@v1
+        with:
+          minecraftVersion: ${{ inputs.minecraftVersion }}
+          channel: ${{ inputs.channel }}
+        id: get-fabric-version
+      - name: Finding prior patch versions
+        uses: ModdingForBlockheads/iterate-minor-version@v1
+        with:
+          version: ${{ inputs.minecraftVersion }}
+        id: iterate-minor-version
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Ensuring version branch exists
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "<>"
+          git switch ${VERSION_BRANCH} || git switch -c ${VERSION_BRANCH}
+          git push origin ${VERSION_BRANCH}
+        shell: bash
+        env:
+          VERSION_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x
+      - name: Updating version properties
+        run: |
+          sed -i "s/^\s*forge_version\s*=.*/fabric_version = ${{ steps.get-fabric-version.outputs.apiVersion }}/g" gradle.properties
+          sed -i "s/^\s*forge_version\s*=.*/fabric_loader_version = ${{ steps.get-fabric-version.outputs.loaderVersion }}/g" gradle.properties
+          sed -i "s/^\s*minecraft_version\s*=.*/minecraft_version = ${{ inputs.minecraftVersion }}/g" gradle.properties
+          sed -i "s/^\s*minecraft_versions\s*=.*/minecraft_versions = ${{ steps.iterate-minor-version.outputs.versions }}/g" gradle.properties
+      - name: Creating pull request
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "<>"
+          git switch -c $PR_BRANCH
+          git commit -am "Update Fabric versions for ${{ inputs.minecraftVersion }}"
+          git push --force-with-lease origin $PR_BRANCH
+          gh pr create \
+            --head "${PR_BRANCH}" \
+            --base "${TARGET_BRANCH}" \
+            --title "Update Fabric versions for ${TARGET_BRANCH} to ${{ inputs.minecraftVersion }}" \
+            --body "Automatic version updates for ${TARGET_BRANCH} to ${{ inputs.minecraftVersion }}. Supported versions set to ${{ steps.iterate-minor-version.outputs.versions }}."
+        shell: bash
+        env:
+          PR_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x-update-fabric-versions
           TARGET_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

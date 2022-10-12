@@ -6,6 +6,7 @@ on:
         description: 'The bump in version for this release'
         required: true
         type: choice
+        default: patch
         options:
           - major
           - minor

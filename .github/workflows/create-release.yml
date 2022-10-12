@@ -3,14 +3,10 @@ on:
   workflow_call:
     inputs:
       bump:
-        description: 'The bump in version for this release'
+        description: "The bump in version for this release, either 'major', 'minor' or 'patch'"
         required: true
-        type: choice
-        default: patch
-        options:
-          - major
-          - minor
-          - patch
+        type: string
+        default: 'patch'
 
 jobs:
   create-release:

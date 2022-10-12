@@ -7,10 +7,13 @@ on:
        required: true
        type: string
      channel:
-       description: 'The release channel to update to, either latest or recommended'
+       description: 'The release channel to update to'
        required: false
        default: 'latest'
-       type: string
+       type: choice
+       options:
+         - latest
+         - recommended
 
 jobs:
   update-versions-forge:

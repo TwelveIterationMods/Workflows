@@ -36,3 +36,6 @@ jobs:
         shell: bash
         env:
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+  publish-release:
+    uses: ModdingForBlockheads/Workflows/.github/workflows/publish-release.yml@main
+    secrets: inherit

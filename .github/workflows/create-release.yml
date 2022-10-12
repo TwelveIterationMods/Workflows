@@ -18,17 +18,10 @@ jobs:
         shell: bash
         run: echo "##[set-output name=version;]$(cat gradle.properties | grep -w "mod_version" | cut -d= -f2)"
         id: extract-version
-      - name: debug
-        shell: bash
-        run: |
-          echo $(cat gradle.properties)
-          echo $(cat gradle.properties | grep -w "mod_version")
-          echo $(cat gradle.properties | grep -w "mod_version" | cut -d= -f2)
-        id: debug
       - name: Bumping version
         uses: ModdingForBlockheads/bump-version@v1
         with:
-          version: ${{ steps.extract_version.outputs.version }}
+          version: ${{ steps.extract-version.outputs.version }}
           bump: ${{ inputs.bump }}
         id: bump-version
       - name: Updating version properties

@@ -23,10 +23,10 @@ jobs:
           channel: ${{ inputs.channel }}
         id: get-forge-version
       - name: Finding prior patch versions
-        uses: ModdingForBlockheads/iterate-minor-version@v1
+        uses: ModdingForBlockheads/list-compatible-mc-versions@v1
         with:
           version: ${{ inputs.minecraftVersion }}
-        id: iterate-minor-version
+        id: list-compatible-mc-versions
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Ensuring version branch exists
@@ -37,12 +37,12 @@ jobs:
           git push origin ${VERSION_BRANCH}
         shell: bash
         env:
-          VERSION_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x
+          VERSION_BRANCH: ${{ steps.list-compatible-mc-versions.outputs.minorOnly }}.x
       - name: Updating version properties
         run: |
           sed -i "s/^\s*forge_version\s*=.*/forge_version = ${{ steps.get-forge-version.outputs.version }}/g" gradle.properties
           sed -i "s/^\s*minecraft_version\s*=.*/minecraft_version = ${{ inputs.minecraftVersion }}/g" gradle.properties
-          sed -i "s/^\s*minecraft_versions\s*=.*/minecraft_versions = ${{ join(fromJSON(steps.iterate-minor-version.outputs.versions)) }}/g" gradle.properties
+          sed -i "s/^\s*minecraft_versions\s*=.*/minecraft_versions = ${{ join(fromJSON(steps.list-compatible-mc-versions.outputs.versions)) }}/g" gradle.properties
       - name: Creating pull request
         run: |
           git config user.name "GitHub Actions"
@@ -54,11 +54,11 @@ jobs:
             --head "${PR_BRANCH}" \
             --base "${TARGET_BRANCH}" \
             --title "Update Forge versions for ${TARGET_BRANCH} to ${{ inputs.minecraftVersion }}" \
-            --body "Automatic version updates for ${TARGET_BRANCH} to ${{ inputs.minecraftVersion }}. Supported versions set to ${{ steps.iterate-minor-version.outputs.versions }}."
+            --body "Automatic version updates for ${TARGET_BRANCH} to ${{ inputs.minecraftVersion }}. Supported versions set to ${{ steps.list-compatible-mc-versions.outputs.versions }}."
         shell: bash
         env:
-          PR_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x-update-forge-versions
-          TARGET_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x
+          PR_BRANCH: ${{ steps.list-compatible-mc-versions.outputs.minorOnly }}.x-update-forge-versions
+          TARGET_BRANCH: ${{ steps.list-compatible-mc-versions.outputs.minorOnly }}.x
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   update-versions-fabric:
     runs-on: ubuntu-latest
@@ -70,10 +70,10 @@ jobs:
           channel: ${{ inputs.channel }}
         id: get-fabric-version
       - name: Finding prior patch versions
-        uses: ModdingForBlockheads/iterate-minor-version@v1
+        uses: ModdingForBlockheads/list-compatible-mc-versions@v1
         with:
           version: ${{ inputs.minecraftVersion }}
-        id: iterate-minor-version
+        id: list-compatible-mc-versions
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Ensuring version branch exists
@@ -84,13 +84,13 @@ jobs:
           git push origin ${VERSION_BRANCH}
         shell: bash
         env:
-          VERSION_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x
+          VERSION_BRANCH: ${{ steps.list-compatible-mc-versions.outputs.versionWithoutPatch }}.x
       - name: Updating version properties
         run: |
           sed -i "s/^\s*fabric_version\s*=.*/fabric_version = ${{ steps.get-fabric-version.outputs.apiVersion }}/g" gradle.properties
           sed -i "s/^\s*fabric_loader_version\s*=.*/fabric_loader_version = ${{ steps.get-fabric-version.outputs.loaderVersion }}/g" gradle.properties
           sed -i "s/^\s*minecraft_version\s*=.*/minecraft_version = ${{ inputs.minecraftVersion }}/g" gradle.properties
-          sed -i "s/^\s*minecraft_versions\s*=.*/minecraft_versions = ${{ join(fromJSON(steps.iterate-minor-version.outputs.versions)) }}/g" gradle.properties
+          sed -i "s/^\s*minecraft_versions\s*=.*/minecraft_versions = ${{ join(fromJSON(steps.list-compatible-mc-versions.outputs.versions)) }}/g" gradle.properties
       - name: Creating pull request
         run: |
           git config user.name "GitHub Actions"
@@ -102,9 +102,9 @@ jobs:
             --head "${PR_BRANCH}" \
             --base "${TARGET_BRANCH}" \
             --title "Update Fabric versions for ${TARGET_BRANCH} to ${{ inputs.minecraftVersion }}" \
-            --body "Automatic version updates for ${TARGET_BRANCH} to ${{ inputs.minecraftVersion }}. Supported versions set to ${{ steps.iterate-minor-version.outputs.versions }}."
+            --body "Automatic version updates for ${TARGET_BRANCH} to ${{ inputs.minecraftVersion }}. Supported versions set to ${{ steps.list-compatible-mc-versions.outputs.versions }}."
         shell: bash
         env:
-          PR_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x-update-fabric-versions
-          TARGET_BRANCH: ${{ steps.iterate-minor-version.outputs.minorOnly }}.x
+          PR_BRANCH: ${{ steps.list-compatible-mc-versions.outputs.versionWithoutPatch }}.x-update-fabric-versions
+          TARGET_BRANCH: ${{ steps.list-compatible-mc-versions.outputs.versionWithoutPatch }}.x
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

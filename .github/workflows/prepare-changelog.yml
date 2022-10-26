@@ -1,0 +1,46 @@
+name: prepare-changelog
+on:
+  workflow_call:
+
+jobs:
+  prepare-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Extracting last version from properties
+        shell: bash
+        run: echo "##[set-output name=version;]$(cat gradle.properties | grep -w "mod_version" | cut -d= -f2)"
+        id: extract-version
+      - name: Generating changelog
+        run: |
+          git log --pretty=format:"- %s (by %an)" "v${{ steps.extract-version.outputs.version }}"..HEAD > CHANGELOG.md
+          sed -i '/^-\s*(chore|ci|docs|refactor)(\([^)]*\))?:/d' CHANGELOG.md
+          sed -i '/^-\s*Merge /d' CHANGELOG.md
+          # remove commit type prefix
+          sed -i 's/^-\s*\w*(\([^)]*\))?:\s*(.+)/- \1/' CHANGELOG.md
+          sed -i 's/^- Fix /- Fixed /' CHANGELOG.md
+          sed -i 's/^- Add /- Added /' CHANGELOG.md
+          sed -i 's/^- Remove /- Removed /' CHANGELOG.md
+          sed -i 's/^- Update /- Updated /' CHANGELOG.md
+          sed -i 's/^- Change /- Changed /' CHANGELOG.md
+          sed -i 's/^- Improve /- Improved /' CHANGELOG.md
+          sed -i 's/^- Optimize /- Optimized /' CHANGELOG.md
+          sort CHANGELOG.md -o CHANGELOG.md
+      - name: Creating pull request
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "<>"
+          git switch -c $PR_BRANCH
+          git commit -am "Update changelog for ${{ github.ref_name }}"
+          git push --force origin $PR_BRANCH
+          gh pr create \
+            --head "${PR_BRANCH}" \
+            --base "${TARGET_BRANCH}" \
+            --title "Update changelog for ${TARGET_BRANCH}" \
+            --body "Generated changelog for ${TARGET_BRANCH}."
+        shell: bash
+        env:
+          PR_BRANCH: ${{ github.ref_name }}-update-changelog
+          TARGET_BRANCH: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

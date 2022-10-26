@@ -17,10 +17,10 @@ jobs:
       - name: Generating changelog
         run: |
           git log --pretty=format:"- %s (by %an)" "v${{ steps.extract-version.outputs.version }}"..HEAD > CHANGELOG.md
-          sed -i '/^-\s*(chore|ci|docs|refactor)(\([^)]*\))?:/d' CHANGELOG.md
+          sed -E -i '/^-\s*(chore|ci|docs|refactor)(\([^)]*\))?:/d' CHANGELOG.md
           sed -i '/^-\s*Merge /d' CHANGELOG.md
-          # remove commit type prefix
-          sed -i 's/^-\s*\w*(\([^)]*\))?:\s*(.+)/- \1/' CHANGELOG.md
+          sed -i 's/ (by BlayTheNinth)$//' CHANGELOG.md
+          sed -E -i 's/^-\s*\w*(\([^)]*\))?:\s*(.+)/- \1/' CHANGELOG.md
           sed -i 's/^- Fix /- Fixed /' CHANGELOG.md
           sed -i 's/^- Add /- Added /' CHANGELOG.md
           sed -i 's/^- Remove /- Removed /' CHANGELOG.md

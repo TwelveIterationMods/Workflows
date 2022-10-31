@@ -20,7 +20,7 @@ jobs:
         run: chmod +x ./gradlew
       - name: Extract version from tag
         shell: bash
-        run: echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/*/v})"
+        run: echo "version=$(echo ${GITHUB_REF#refs/*/v})" >> $GITHUB_OUTPUT
         id: extract_version_fabric
       - name: Publish
         run: ./gradlew :fabric:publish
@@ -48,7 +48,7 @@ jobs:
         run: chmod +x ./gradlew
       - name: Extract version from tag
         shell: bash
-        run: echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/*/v})"
+        run: echo "version=$(echo ${GITHUB_REF#refs/*/v})" >> $GITHUB_OUTPUT
         id: extract_version_forge
       - name: Publish
         run: ./gradlew :forge:publish

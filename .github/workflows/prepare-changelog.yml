@@ -12,7 +12,7 @@ jobs:
           fetch-depth: 0
       - name: Extracting last version from properties
         shell: bash
-        run: echo "##[set-output name=version;]$(cat gradle.properties | grep -w "mod_version" | cut -d= -f2 | tr -d ' ')"
+        run: echo "version=$(cat gradle.properties | grep -w "mod_version" | cut -d= -f2 | tr -d ' ')" >> $GITHUB_OUTPUT
         id: extract-version
       - name: Generating changelog
         run: |

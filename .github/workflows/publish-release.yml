@@ -1,5 +1,11 @@
 name: publish-release
-on: [workflow_call]
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: "The ref to publish a release for"
+        required: true
+        type: string
 
 jobs:
   publish-release-fabric:
@@ -9,6 +15,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.ref }}
       - name: Validate gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Setup JDK
@@ -37,6 +45,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.ref }}
       - name: Validate gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Setup JDK

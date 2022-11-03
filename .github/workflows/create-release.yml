@@ -39,3 +39,4 @@ jobs:
   publish-release:
     uses: ModdingForBlockheads/Workflows/.github/workflows/publish-release.yml@main
     secrets: inherit
+    needs: create-release

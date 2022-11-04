@@ -6,6 +6,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
+    strategy:
+      matrix:
+        loader: [fabric, forge]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -19,29 +22,7 @@ jobs:
       - name: Make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: Publish
-        run: ./gradlew :fabric:publish
-        env:
-          GPR_USERNAME: ${{secrets.GPR_USERNAME}}
-          GPR_TOKEN: ${{secrets.GPR_TOKEN}}
-          GPR_BUILD_NUMBER: ${{github.run_number}}
-  publish-snapshot-forge:
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Validate gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
-      - name: Setup JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: temurin
-      - name: Make gradle wrapper executable
-        run: chmod +x ./gradlew
-      - name: Publish
-        run: ./gradlew :forge:publish
+        run: ./gradlew :${{ matrix.loader }}:publish
         env:
           GPR_USERNAME: ${{secrets.GPR_USERNAME}}
           GPR_TOKEN: ${{secrets.GPR_TOKEN}}

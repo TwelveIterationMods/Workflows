@@ -7,10 +7,14 @@ on:
         type: string
 
 jobs:
-  publish-release-fabric:
+  publish-release:
     runs-on: ubuntu-latest
     permissions:
       packages: write
+    strategy:
+      matrix:
+        loader: [fabric, forge]
+        site: [curseforge, modrinth]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -28,42 +32,12 @@ jobs:
       - name: Extract version from tag
         shell: bash
         run: echo "version=$(echo ${GITHUB_REF#refs/*/v})" >> $GITHUB_OUTPUT
-        id: extract_version_fabric
+        id: extract_version
       - name: Publish
-        run: ./gradlew :fabric:publish
+        run: ./gradlew :${{ matrix.loader }}:${{ matrix.site }}
         env:
           GPR_USERNAME: ${{secrets.GPR_USERNAME}}
           GPR_TOKEN: ${{secrets.GPR_TOKEN}}
           CURSEFORGE_TOKEN: ${{secrets.CURSEFORGE_TOKEN}}
           MODRINTH_TOKEN: ${{secrets.MODRINTH_TOKEN}}
-          GPR_BUILD_VERSION: ${{steps.extract_version_fabric.outputs.version}}
-  publish-release-forge:
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ inputs.ref }}
-      - name: Validate gradle wrapper
-        uses: gradle/wrapper-validation-action@v1
-      - name: Setup JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: temurin
-      - name: Make gradle wrapper executable
-        run: chmod +x ./gradlew
-      - name: Extract version from tag
-        shell: bash
-        run: echo "version=$(echo ${GITHUB_REF#refs/*/v})" >> $GITHUB_OUTPUT
-        id: extract_version_forge
-      - name: Publish
-        run: ./gradlew :forge:publish
-        env:
-          GPR_USERNAME: ${{secrets.GPR_USERNAME}}
-          GPR_TOKEN: ${{secrets.GPR_TOKEN}}
-          CURSEFORGE_TOKEN: ${{secrets.CURSEFORGE_TOKEN}}
-          MODRINTH_TOKEN: ${{secrets.MODRINTH_TOKEN}}
-          GPR_BUILD_VERSION: ${{steps.extract_version_forge.outputs.version}}
+          GPR_BUILD_VERSION: ${{steps.extract_version.outputs.version}}

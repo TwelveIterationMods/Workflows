@@ -37,7 +37,7 @@ jobs:
           git push origin ${VERSION_BRANCH}
         shell: bash
         env:
-          VERSION_BRANCH: ${{ steps.list-compatible-mc-versions.outputs.minorOnly }}.x
+          VERSION_BRANCH: ${{ steps.list-compatible-mc-versions.outputs.versionWithoutPatch }}.x
       - name: Updating version properties
         run: |
           sed -i "s/^\s*forge_version\s*=.*/forge_version = ${{ steps.get-forge-version.outputs.version }}/g" gradle.properties
@@ -57,8 +57,8 @@ jobs:
             --body "Automatic version updates for ${TARGET_BRANCH} to ${{ inputs.minecraftVersion }}. Supported versions set to ${{ steps.list-compatible-mc-versions.outputs.versions }}."
         shell: bash
         env:
-          PR_BRANCH: ${{ steps.list-compatible-mc-versions.outputs.minorOnly }}.x-update-forge-versions
-          TARGET_BRANCH: ${{ steps.list-compatible-mc-versions.outputs.minorOnly }}.x
+          PR_BRANCH: ${{ steps.list-compatible-mc-versions.outputs.versionWithoutPatch }}.x-update-forge-versions
+          TARGET_BRANCH: ${{ steps.list-compatible-mc-versions.outputs.versionWithoutPatch }}.x
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   update-versions-fabric:
     runs-on: ubuntu-latest

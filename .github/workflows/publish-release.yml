@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         loader: [fabric, forge]
-        site: [curseforge, modrinth]
+        site: [curseforge, modrinth, publish]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -34,7 +34,7 @@ jobs:
         run: echo "version=$(echo ${GITHUB_REF#refs/*/v})" >> $GITHUB_OUTPUT
         id: extract_version
       - name: Publish
-        run: ./gradlew :${{ matrix.loader }}:publish :${{ matrix.loader }}:${{ matrix.site }}
+        run: ./gradlew :${{ matrix.loader }}:${{ matrix.site }}
         env:
           GPR_USERNAME: ${{secrets.GPR_USERNAME}}
           GPR_TOKEN: ${{secrets.GPR_TOKEN}}

@@ -21,5 +21,15 @@ jobs:
           distribution: temurin
       - name: Make gradle wrapper executable
         run: chmod +x ./gradlew
+      - name: Extracting version from properties
+        shell: bash
+        run: echo "version=$(cat gradle.properties | grep -w "mod_version" | cut -d= -f2)" >> $GITHUB_OUTPUT
+        id: extract-version
+      - name: Bumping version
+        uses: TwelveIterationMods/bump-version@v1
+        with:
+          version: ${{ steps.extract-version.outputs.version }}
+          bump: minor
+        id: bump-version
       - name: Publish
-        run: ./gradlew :${{ matrix.loader }}:publish '-Pmod_version=${{ github.sha }}-SNAPSHOT' '-PtwelveIterationsNexusUsername=${{ secrets.NEXUS_USER }}' '-PtwelveIterationsNexusPassword=${{ secrets.NEXUS_PASSWORD }}'
+        run: ./gradlew :${{ matrix.loader }}:publish '-Pmod_version=${{ steps.bump-version.outputs.version }}-SNAPSHOT' '-PtwelveIterationsNexusUsername=${{ secrets.NEXUS_USER }}' '-PtwelveIterationsNexusPassword=${{ secrets.NEXUS_PASSWORD }}'

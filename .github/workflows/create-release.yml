@@ -21,7 +21,7 @@ jobs:
         run: echo "version=$(cat gradle.properties | grep -w "mod_version" | cut -d= -f2)" >> $GITHUB_OUTPUT
         id: extract-version
       - name: Bumping version
-        uses: ModdingForBlockheads/bump-version@v1
+        uses: TwelveIterationMods/bump-version@v1
         with:
           version: ${{ steps.extract-version.outputs.version }}
           bump: ${{ inputs.bump }}
@@ -39,7 +39,7 @@ jobs:
         env:
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   publish-release:
-    uses: ModdingForBlockheads/Workflows/.github/workflows/publish-release.yml@main
+    uses: TwelveIterationMods/Workflows/.github/workflows/publish-release.yml@main
     with:
       ref: ${{ needs.create-release.outputs.ref }}
     secrets: inherit

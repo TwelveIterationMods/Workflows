@@ -17,13 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Finding Forge version
-        uses: ModdingForBlockheads/get-forge-version@v1
+        uses: TwelveIterationMods/get-forge-version@v1
         with:
           minecraftVersion: ${{ inputs.minecraftVersion }}
           channel: ${{ inputs.channel }}
         id: get-forge-version
       - name: Finding prior patch versions
-        uses: ModdingForBlockheads/list-compatible-mc-versions@v1
+        uses: TwelveIterationMods/list-compatible-mc-versions@v1
         with:
           version: ${{ inputs.minecraftVersion }}
         id: list-compatible-mc-versions
@@ -64,13 +64,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Finding Fabric version
-        uses: ModdingForBlockheads/get-fabric-version@v1
+        uses: TwelveIterationMods/get-fabric-version@v1
         with:
           minecraftVersion: ${{ inputs.minecraftVersion }}
           channel: ${{ inputs.channel }}
         id: get-fabric-version
       - name: Finding prior patch versions
-        uses: ModdingForBlockheads/list-compatible-mc-versions@v1
+        uses: TwelveIterationMods/list-compatible-mc-versions@v1
         with:
           version: ${{ inputs.minecraftVersion }}
         id: list-compatible-mc-versions

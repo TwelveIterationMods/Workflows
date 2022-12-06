@@ -34,10 +34,7 @@ jobs:
         run: echo "version=$(echo ${GITHUB_REF#refs/*/v})" >> $GITHUB_OUTPUT
         id: extract_version
       - name: Publish
-        run: ./gradlew :${{ matrix.loader }}:${{ matrix.site }}
+        run: ./gradlew :${{ matrix.loader }}:${{ matrix.site }} '-Pmod_version=${{steps.extract_version.outputs.version}}' '-PtwelveIterationsNexusUsername=${{ secrets.NEXUS_USER }}' '-PtwelveIterationsNexusPassword=${{ secrets.NEXUS_PASSWORD }}'
         env:
-          GPR_USERNAME: ${{secrets.GPR_USERNAME}}
-          GPR_TOKEN: ${{secrets.GPR_TOKEN}}
           CURSEFORGE_TOKEN: ${{secrets.CURSEFORGE_TOKEN}}
           MODRINTH_TOKEN: ${{secrets.MODRINTH_TOKEN}}
-          GPR_BUILD_VERSION: ${{steps.extract_version.outputs.version}}

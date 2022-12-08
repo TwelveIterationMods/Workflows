@@ -13,7 +13,7 @@ jobs:
       packages: write
     strategy:
       matrix:
-        loader: [fabric, forge]
+        loader: [shared, fabric, forge]
         site: [curseforge, modrinth, publish]
     steps:
       - name: Checkout repository

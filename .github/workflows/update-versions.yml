@@ -48,7 +48,7 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "<>"
           git switch -c $PR_BRANCH
-          git commit -am "Update Forge versions for ${{ inputs.minecraftVersion }}"
+          git commit -am "chore: Update Forge versions for ${{ inputs.minecraftVersion }}"
           git push --force-with-lease origin $PR_BRANCH
           gh pr create \
             --head "${PR_BRANCH}" \
@@ -96,7 +96,7 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "<>"
           git switch -c $PR_BRANCH
-          git commit -am "Update Fabric versions for ${{ inputs.minecraftVersion }}"
+          git commit -am "chore: Update Fabric versions for ${{ inputs.minecraftVersion }}"
           git push --force-with-lease origin $PR_BRANCH
           gh pr create \
             --head "${PR_BRANCH}" \

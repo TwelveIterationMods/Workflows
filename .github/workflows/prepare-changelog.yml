@@ -35,7 +35,7 @@ jobs:
           git config user.email "<>"
           git switch -c $PR_BRANCH
           git add CHANGELOG.md
-          git commit -am "Update changelog for ${{ github.ref_name }}"
+          git commit -am "chore: Update changelog for ${{ github.ref_name }}"
           git push --force origin $PR_BRANCH
           gh pr create \
             --head "${PR_BRANCH}" \

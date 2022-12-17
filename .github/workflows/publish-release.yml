@@ -13,8 +13,13 @@ jobs:
       packages: write
     strategy:
       matrix:
-        loader: [shared, fabric, forge]
-        site: [curseforge, modrinth, publish]
+        loader: [ shared, fabric, forge ]
+        site: [ curseforge, modrinth, publish ]
+        exclude:
+          - loader: shared
+            site: curseforge
+          - loader: shared
+            site: modrinth
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

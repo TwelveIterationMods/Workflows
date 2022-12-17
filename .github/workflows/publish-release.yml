@@ -5,6 +5,9 @@ on:
       ref:
         description: "The ref to publish a release for"
         type: string
+      version:
+        description: "The version to publish a release as"
+        type: string
 
 jobs:
   publish-release:
@@ -34,12 +37,8 @@ jobs:
           distribution: temurin
       - name: Make gradle wrapper executable
         run: chmod +x ./gradlew
-      - name: Extract version from tag
-        shell: bash
-        run: echo "version=$(echo ${GITHUB_REF#refs/*/v})" >> $GITHUB_OUTPUT
-        id: extract_version
       - name: Publish
-        run: ./gradlew :${{ matrix.loader }}:${{ matrix.site }} '-Pmod_version=${{steps.extract_version.outputs.version}}' '-PtwelveIterationsNexusUsername=${{ secrets.NEXUS_USER }}' '-PtwelveIterationsNexusPassword=${{ secrets.NEXUS_PASSWORD }}'
+        run: ./gradlew :${{ matrix.loader }}:${{ matrix.site }} '-Pmod_version=${{inputs.version}}' '-PtwelveIterationsNexusUsername=${{ secrets.NEXUS_USER }}' '-PtwelveIterationsNexusPassword=${{ secrets.NEXUS_PASSWORD }}'
         env:
           CURSEFORGE_TOKEN: ${{secrets.CURSEFORGE_TOKEN}}
           MODRINTH_TOKEN: ${{secrets.MODRINTH_TOKEN}}

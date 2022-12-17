@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       ref: v${{ steps.bump-version.outputs.version }}
+      version: ${{ steps.bump-version.outputs.version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -42,5 +43,6 @@ jobs:
     uses: TwelveIterationMods/Workflows/.github/workflows/publish-release.yml@main
     with:
       ref: ${{ needs.create-release.outputs.ref }}
+      version: ${{ needs.create-release.outputs.version }}
     secrets: inherit
     needs: create-release

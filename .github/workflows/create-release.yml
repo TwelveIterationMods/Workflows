@@ -7,6 +7,10 @@ on:
         required: true
         type: string
         default: 'patch'
+      type:
+        description: "The type for this release, either 'release', 'beta' or 'alpha'"
+        type: string
+        default: 'release'
 
 jobs:
   create-release:
@@ -44,5 +48,6 @@ jobs:
     with:
       ref: ${{ needs.create-release.outputs.ref }}
       version: ${{ needs.create-release.outputs.version }}
+      type: ${{ inputs.type }}
     secrets: inherit
     needs: create-release

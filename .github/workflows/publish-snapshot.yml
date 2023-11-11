@@ -8,7 +8,7 @@ jobs:
       packages: write
     strategy:
       matrix:
-        loader: [shared, fabric, forge]
+        loader: [shared, fabric, forge, neoforge]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -23,7 +23,7 @@ jobs:
         run: chmod +x ./gradlew
       - name: Extracting version from properties
         shell: bash
-        run: echo "version=$(cat gradle.properties | grep -w "mod_version" | cut -d= -f2)" >> $GITHUB_OUTPUT
+        run: echo "version=$(cat gradle.properties | grep -w "^\s*version" | cut -d= -f2)" >> $GITHUB_OUTPUT
         id: extract-version
       - name: Bumping version
         uses: TwelveIterationMods/bump-version@v1

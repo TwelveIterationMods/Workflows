@@ -16,7 +16,7 @@ jobs:
       packages: write
     strategy:
       matrix:
-        loader: [ shared, fabric, forge ]
+        loader: [ shared, fabric, forge, neoforge ]
         site: [ curseforge, modrinth, publish ]
         exclude:
           - loader: shared

@@ -40,7 +40,7 @@ jobs:
         env:
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
   publish-release:
-    uses: TwelveIterationMods/Workflows/.github/workflows/publish-release.yml@main
+    uses: TwelveIterationMods/Workflows/.github/workflows/publish-release.yml@v2
     with:
       ref: ${{ needs.create-release.outputs.ref }}
       version: ${{ needs.create-release.outputs.version }}
